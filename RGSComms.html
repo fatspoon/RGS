@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Where RGS information lives</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@500;600&family=Libre+Franklin:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f5f6fa; --card:#ffffff; --ink:#1d2752; --muted:#5b6385;
+  --rule:#d5d9e6; --link:#c3c8d8; --hot:#b3223c; --hot-soft:#f6e3e7;
+  --navy:#22306b;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141a33; --card:#1d2547; --ink:#e7eaf5; --muted:#a3aac8;
+    --rule:#323b63; --link:#3a4470; --hot:#ff6f8a; --hot-soft:#3a2033; --navy:#9fb0ff;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141a33; --card:#1d2547; --ink:#e7eaf5; --muted:#a3aac8;
+  --rule:#323b63; --link:#3a4470; --hot:#ff6f8a; --hot-soft:#3a2033; --navy:#9fb0ff;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Libre Franklin",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.45}
+main{max-width:1040px;margin:0 auto;padding:2rem 1.25rem 3rem}
+h1{font-family:"Crimson Pro",Georgia,"Times New Roman",serif;font-weight:600;
+  font-size:clamp(2rem,5vw,3.1rem);line-height:1.05;margin:0 0 .6rem;letter-spacing:-.01em;max-width:18ch}
+.lede{color:var(--muted);max-width:62ch;margin:0 0 1.75rem}
+.lede strong{color:var(--ink);font-weight:600}
+.howto{font-size:.85rem;color:var(--muted);margin:0 0 1rem}
+
+.map{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(48px,.75fr) minmax(0,1fr);}
+.map svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.col h2{font-family:"Crimson Pro",Georgia,serif;font-weight:600;font-size:1.3rem;margin:0 0 .75rem}
+.col.topics{grid-column:3}
+.group{font-size:.8rem;color:var(--muted);margin:1rem 0 .4rem}
+.group:first-of-type{margin-top:0}
+
+.node{position:relative;display:flex;align-items:center;gap:.45rem;width:100%;text-align:left;
+  font:inherit;color:inherit;background:var(--card);border:1px solid var(--rule);
+  border-radius:6px;padding:.45rem .6rem;margin:0 0 .4rem;cursor:pointer;line-height:1.25}
+.node .sub{display:block;font-size:.75rem;color:var(--muted)}
+.node .name{flex:1;min-width:0}
+.node:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+.channel{border-left:3px solid var(--navy)}
+.topic{border-right:3px solid var(--navy)}
+.lock{flex:none;width:13px;height:13px;color:var(--hot)}
+.count{flex:none;font-size:.75rem;font-weight:600;min-width:1.6rem;text-align:center;
+  border-radius:99px;padding:.1rem .35rem;background:var(--paper);border:1px solid var(--rule)}
+.count.many{background:var(--hot-soft);border-color:var(--hot);color:var(--hot)}
+
+.map.active .node{opacity:.35}
+.map.active .node.lit{opacity:1;border-color:var(--hot)}
+.map.active .node.sel{opacity:1;background:var(--hot-soft);border-color:var(--hot)}
+path.l{fill:none;stroke:var(--link);stroke-width:1.2;transition:stroke .15s,opacity .15s}
+.map.active path.l{opacity:.15}
+.map.active path.l.lit{opacity:1;stroke:var(--hot);stroke-width:2}
+
+.panel{margin-top:1.5rem;background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:1rem 1.1rem;min-height:4.5rem}
+.panel h3{font-family:"Crimson Pro",Georgia,serif;font-weight:600;font-size:1.25rem;margin:0 0 .25rem}
+.panel p{margin:0;color:var(--muted);max-width:70ch}
+.key{display:flex;flex-wrap:wrap;gap:1.25rem;font-size:.8rem;color:var(--muted);margin-top:1.25rem}
+.key span{display:inline-flex;align-items:center;gap:.35rem}
+.foot{font-size:.8rem;color:var(--muted);margin-top:1rem;max-width:70ch}
+
+@media (max-width:620px){
+  main{padding:1.25rem .8rem 2rem}
+  body{font-size:14px}
+  .node{padding:.4rem .45rem;font-size:.82rem}
+  .node .sub{display:none}
+  .map{grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){path.l{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Sixteen topics, twelve places to look</h1>
+  <p class="lede">Every channel a Year 7 parent at RGS has needed to watch since the summer, mapped to what it carries. <strong>Six need their own login.</strong> One trip, Woodrow, was spread across five of them.</p>
+  <p class="howto">Tap or hover a channel or a topic to trace its links. Topics are sorted by how many channels they're split across.</p>
+
+  <div class="map" id="map">
+    <svg id="links" aria-hidden="true"></svg>
+    <div class="col channels" id="channels"><h2>Channels</h2></div>
+    <div class="col topics" id="topics"><h2>Topics</h2></div>
+  </div>
+
+  <div class="panel" id="panel" aria-live="polite">
+    <h3>Pick something to trace</h3>
+    <p>The red count shows topics a parent has to piece together from three or more channels.</p>
+  </div>
+
+  <div class="key">
+    <span><svg class="lock" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M4 7V5a4 4 0 1 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z"/></svg>Separate login or password</span>
+    <span><span class="count many">3+</span>Split across three or more channels</span>
+  </div>
+  <p class="foot">Excludes in-person events, RGSHW Sport social media and parent-run WhatsApp groups, which are optional or unofficial. Compiled from school emails, letters and calendars received April to October 2026.</p>
+</main>
+
+<script>
+const LOCK='<svg class="lock" viewBox="0 0 16 16" aria-label="Login required"><path fill="currentColor" d="M4 7V5a4 4 0 1 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z"/></svg>';
+
+const channels=[
+  {id:'admin',  g:'Email', name:'School emails', sub:'admin@rgshw.com, one per child'},
+  {id:'staff',  g:'Email', name:'Individual staff emails', sub:'Head of Year, IT, Sport, Careers, DT'},
+  {id:'portal', g:'Portals and forms', name:'Parent Portal', sub:'Reports', login:1},
+  {id:'pp',     g:'Portals and forms', name:'ParentPay', sub:'Payments and notices', login:1},
+  {id:'socsp',  g:'Portals and forms', name:'SOCS parent portal', sub:'parents.socs.cloud', login:1},
+  {id:'socss',  g:'Portals and forms', name:'SOCS Sport site', sub:'sport.rgshw.com, team sheet password', login:1},
+  {id:'gc',     g:'Portals and forms', name:'Google Classroom', sub:'Year 7 and Careers classrooms', login:1},
+  {id:'seneca', g:'Portals and forms', name:'Seneca', sub:'senecalearning.com', login:1},
+  {id:'unifrog',g:'Portals and forms', name:'Unifrog', sub:'Careers platform', login:1},
+  {id:'forms',  g:'Portals and forms', name:'Linked online forms', sub:'Consents, registrations, RSVPs'},
+  {id:'third',  g:'Outside the school', name:'Third-party sites', sub:'NHS, ILS, Hawkinsport, FreedomTech, ticketing'},
+  {id:'frorgs', g:'Outside the school', name:'FRORGS rugby list', sub:'Parent reps, email and WhatsApp'}
+];
+
+const topics=[
+  {id:'trips',    name:'Trips (Woodrow)',          ch:['admin','staff','pp','gc','forms']},
+  {id:'it',       name:'Chromebooks',              ch:['admin','staff','forms','pp','third']},
+  {id:'rugby',    name:'Rugby logistics',          ch:['frorgs','staff','admin','socss']},
+  {id:'homework', name:'Homework',                 ch:['seneca','gc','admin','forms']},
+  {id:'careers',  name:'Careers',                  ch:['staff','unifrog','gc','forms']},
+  {id:'dates',    name:'Key dates and events',     ch:['admin','third','frorgs']},
+  {id:'uniform',  name:'Uniform and kit',          ch:['admin','third','pp']},
+  {id:'pay',      name:'Payments and lunch money', ch:['pp','admin']},
+  {id:'clubs',    name:'Clubs and activities',     ch:['socsp','staff']},
+  {id:'fixtures', name:'Fixtures and team sheets', ch:['socss','frorgs']},
+  {id:'music',    name:'Music lessons',            ch:['staff','forms']},
+  {id:'health',   name:'Health and consents',      ch:['third','admin']},
+  {id:'lockers',  name:'Lockers',                  ch:['admin','third']},
+  {id:'cookery',  name:'Cookery',                  ch:['staff','pp']},
+  {id:'reports',  name:'Reports',                  ch:['portal']},
+  {id:'timetable',name:'Timetable',                ch:['socsp']}
+].sort((a,b)=>b.ch.length-a.ch.length);
+
+const byId={}; channels.forEach(c=>byId[c.id]=c); topics.forEach(t=>byId[t.id]=t);
+const links=[]; topics.forEach(t=>t.ch.forEach(c=>links.push([c,t.id])));
+
+const chCol=document.getElementById('channels'), tpCol=document.getElementById('topics');
+let lastG=null;
+channels.forEach(c=>{
+  if(c.g!==lastG){const h=document.createElement('div');h.className='group';h.textContent=c.g;chCol.appendChild(h);lastG=c.g;}
+  const b=document.createElement('button');b.className='node channel';b.dataset.id=c.id;
+  b.innerHTML=`<span class="name">${c.name}<span class="sub">${c.sub}</span></span>${c.login?LOCK:''}`;
+  chCol.appendChild(b);
+});
+topics.forEach(t=>{
+  const b=document.createElement('button');b.className='node topic';b.dataset.id=t.id;
+  b.innerHTML=`<span class="count${t.ch.length>=3?' many':''}">${t.ch.length}</span><span class="name">${t.name}</span>`;
+  tpCol.appendChild(b);
+});
+
+const map=document.getElementById('map'), svg=document.getElementById('links');
+const node=id=>map.querySelector(`.node[data-id="${id}"]`);
+function draw(){
+  const m=map.getBoundingClientRect();
+  svg.setAttribute('viewBox',`0 0 ${m.width} ${m.height}`);
+  svg.innerHTML=links.map(([c,t])=>{
+    const a=node(c).getBoundingClientRect(), b=node(t).getBoundingClientRect();
+    const x1=a.right-m.left, y1=a.top+a.height/2-m.top, x2=b.left-m.left, y2=b.top+b.height/2-m.top;
+    const dx=(x2-x1)*.5;
+    return `<path class="l" data-c="${c}" data-t="${t}" d="M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}"/>`;
+  }).join('');
+  if(sel) apply(sel);
+}
+
+let sel=null;
+const panel=document.getElementById('panel');
+function apply(id){
+  map.classList.add('active');
+  map.querySelectorAll('.node').forEach(n=>n.classList.remove('lit','sel'));
+  node(id).classList.add('sel');
+  const isCh=!!channels.find(c=>c.id===id);
+  const others=[];
+  svg.querySelectorAll('path.l').forEach(p=>{
+    const hit=isCh?p.dataset.c===id:p.dataset.t===id;
+    p.classList.toggle('lit',hit);
+    if(hit){const o=isCh?p.dataset.t:p.dataset.c;node(o).classList.add('lit');others.push(byId[o].name);}
+  });
+  const item=byId[id];
+  if(isCh){
+    panel.innerHTML=`<h3>${item.name}</h3><p>Carries information on ${others.length} topic${others.length>1?'s':''}: ${list(others)}.${item.login?' Needs its own login or password.':''}</p>`;
+  }else{
+    panel.innerHTML=`<h3>${item.name}</h3><p>${others.length===1?'Comes through one channel':'Split across '+others.length+' channels'}: ${list(others)}.</p>`;
+  }
+}
+function clear(){
+  sel=null;map.classList.remove('active');
+  map.querySelectorAll('.node').forEach(n=>n.classList.remove('lit','sel'));
+  svg.querySelectorAll('path.l').forEach(p=>p.classList.remove('lit'));
+  panel.innerHTML='<h3>Pick something to trace</h3><p>The red count shows topics a parent has to piece together from three or more channels.</p>';
+}
+function list(a){return a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];}
+
+map.addEventListener('click',e=>{
+  const n=e.target.closest('.node'); if(!n) return;
+  if(sel===n.dataset.id){clear();return;}
+  sel=n.dataset.id;apply(sel);
+});
+map.addEventListener('mouseover',e=>{const n=e.target.closest('.node');if(n&&!sel)apply(n.dataset.id);});
+map.addEventListener('mouseleave',()=>{if(!sel)clear();});
+map.addEventListener('focusin',e=>{const n=e.target.closest('.node');if(n&&!sel)apply(n.dataset.id);});
+
+window.addEventListener('resize',draw);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(draw);}
+window.addEventListener('load',draw);
+draw();
+</script>
+</body>
+</html>
